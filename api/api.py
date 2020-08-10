@@ -31,7 +31,7 @@ def make_serialisable(post):
 API endpoints
 """
 
-# get all posts
+# get all blogposts
 @app.route('/blog/posts', methods = ['GET'])
 def get_all_posts():
     all_posts = list(posts.find())
@@ -44,10 +44,9 @@ def get_all_posts():
 
     return jsonify({ "posts": all_posts })
 
-# get post by id
+# get blogpost by id
 @app.route('/blog/posts/<string:post_id>', methods = ['GET'])
 def get_post(post_id):
-    print(post_id)
     post = posts.find_one({ '_id': ObjectId(post_id) })
 
     if not post:
@@ -55,8 +54,11 @@ def get_post(post_id):
 
     return jsonify(make_serialisable(post))
 
+# create new blogpost
 @app.route('/blog/posts', methods = ['POST'])
 def create_post():
+
+    # validation, checks required fields
     fields = ['title', 'author', 'text']
     if not request.json or any([not field in request.json for field in fields]):
         abort(400)
@@ -70,10 +72,36 @@ def create_post():
         'visibility': True
     }
 
+    # insert document into collection and return the blogpost
     post_id = posts.insert_one(post).inserted_id
     post['_id'] = str(post_id)
 
-    return jsonify({'post': post}), 201
+    return jsonify(post), 201
+
+# update existing blogpost
+@app.route('/blog/posts/<string:post_id>', methods = ['PUT'])
+def update_post(post_id):
+    post = posts.find_one({ '_id': ObjectId(post_id) })
+
+    if not post:
+        abort(404)
+    if not request.json:
+        abort(400)
+    
+    fields = {'title': str, 'author': str, 'category': str, 'text': str, 'visibility': bool}
+    updated_fields = {}
+    for field in fields.keys():
+        if field in request.json:
+            if type(request.json[field]) != fields[field]:
+                abort(400)
+            
+            updated_fields[field] = request.json[field]
+            post[field] = request.json[field]
+
+    result = posts.update_one({ '_id': ObjectId(post_id) }, { '$set': updated_fields })
+    
+    return jsonify(make_serialisable(post))
+
 
 
 """
