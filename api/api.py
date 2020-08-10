@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, abort, make_response, request
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
 from bson.objectid import ObjectId
 import os
 from os.path import join, dirname
@@ -44,6 +44,7 @@ def get_all_posts():
 
     return jsonify({ "posts": all_posts })
 
+
 # get blogpost by id
 @app.route('/blog/posts/<string:post_id>', methods = ['GET'])
 def get_post(post_id):
@@ -53,6 +54,7 @@ def get_post(post_id):
         abort(404)
 
     return jsonify(make_serialisable(post))
+
 
 # create new blogpost
 @app.route('/blog/posts', methods = ['POST'])
@@ -78,13 +80,10 @@ def create_post():
 
     return jsonify(post), 201
 
+
 # update existing blogpost
 @app.route('/blog/posts/<string:post_id>', methods = ['PUT'])
 def update_post(post_id):
-    post = posts.find_one({ '_id': ObjectId(post_id) })
-
-    if not post:
-        abort(404)
     if not request.json:
         abort(400)
     
@@ -92,16 +91,34 @@ def update_post(post_id):
     updated_fields = {}
     for field in fields.keys():
         if field in request.json:
+            # checks validity of data entry
             if type(request.json[field]) != fields[field]:
                 abort(400)
             
             updated_fields[field] = request.json[field]
-            post[field] = request.json[field]
 
-    result = posts.update_one({ '_id': ObjectId(post_id) }, { '$set': updated_fields })
-    
-    return jsonify(make_serialisable(post))
+    # update and return updated document
+    result = posts.find_one_and_update(
+        { '_id': ObjectId(post_id) }, 
+        { '$set': updated_fields },
+        return_document=ReturnDocument.AFTER
+    )
 
+    if not result:
+        abort(404)
+
+    return jsonify(make_serialisable(result))
+
+# delete existing blogpost
+@app.route('/blog/posts/<string:post_id>', methods = ['DELETE'])
+def delete_post(post_id):
+    # delete and return deleted document
+    result = posts.find_one_and_delete({ '_id': ObjectId(post_id) })
+
+    if not result:
+        abort(404)
+
+    return jsonify(make_serialisable(result))
 
 
 """
