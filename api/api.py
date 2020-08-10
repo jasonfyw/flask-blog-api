@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, abort, make_response, request
+from flask_httpauth import HTTPBasicAuth
 from pymongo import MongoClient, ReturnDocument
 from bson.objectid import ObjectId
 import os
@@ -7,6 +8,8 @@ from dotenv import load_dotenv
 import datetime
 
 app = Flask(__name__)
+auth = HTTPBasicAuth()
+
 
 """
 MongoDB setup
@@ -28,11 +31,29 @@ def make_serialisable(post):
 
 
 """
+Basic authentication
+"""
+
+# basic single-user admin check
+@auth.get_password
+def get_password(username):
+    if username == 'admin':
+        return os.environ.get('ADMIN_PASSWORD')
+    return None
+
+# handle unauthorised access
+@auth.error_handler
+def unauthorised():
+    return make_response(jsonify({ 'error': 'Unauthorised access'}), 403)
+
+
+"""
 API endpoints
 """
 
 # get all blogposts
 @app.route('/blog/posts', methods = ['GET'])
+@auth.login_required
 def get_all_posts():
     all_posts = list(posts.find())
 
@@ -47,6 +68,7 @@ def get_all_posts():
 
 # get blogpost by id
 @app.route('/blog/posts/<string:post_id>', methods = ['GET'])
+@auth.login_required
 def get_post(post_id):
     post = posts.find_one({ '_id': ObjectId(post_id) })
 
@@ -58,6 +80,7 @@ def get_post(post_id):
 
 # create new blogpost
 @app.route('/blog/posts', methods = ['POST'])
+@auth.login_required
 def create_post():
 
     # validation, checks required fields
@@ -83,6 +106,7 @@ def create_post():
 
 # update existing blogpost
 @app.route('/blog/posts/<string:post_id>', methods = ['PUT'])
+@auth.login_required
 def update_post(post_id):
     if not request.json:
         abort(400)
@@ -111,6 +135,7 @@ def update_post(post_id):
 
 # delete existing blogpost
 @app.route('/blog/posts/<string:post_id>', methods = ['DELETE'])
+@auth.login_required
 def delete_post(post_id):
     # delete and return deleted document
     result = posts.find_one_and_delete({ '_id': ObjectId(post_id) })
