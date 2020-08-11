@@ -4,5 +4,10 @@ pip-selfcheck.json
 bin
 include
 lib
+
+# environment variables
 .env
 .flaskenv
+
+# miscellaneous
+__pycache__
