@@ -9,7 +9,7 @@ import datetime
 from auth import auth
 
 
-blog = Blueprint('blog', __name__)
+blogposts = Blueprint('blogposts', __name__)
 
 
 """
@@ -37,7 +37,7 @@ API endpoints
 """
 
 # get all blogposts
-@blog.route('/blog/posts', methods = ['GET'])
+@blogposts.route('/blog/posts', methods = ['GET'])
 def get_all_posts():
     all_posts = list(posts.find())
 
@@ -51,7 +51,7 @@ def get_all_posts():
 
 
 # get blogpost by id
-@blog.route('/blog/posts/<string:post_id>', methods = ['GET'])
+@blogposts.route('/blog/posts/<string:post_id>', methods = ['GET'])
 def get_post(post_id):
     post = posts.find_one({ '_id': ObjectId(post_id) })
 
@@ -62,7 +62,7 @@ def get_post(post_id):
 
 
 # create new blogpost
-@blog.route('/blog/posts', methods = ['POST'])
+@blogposts.route('/blog/posts', methods = ['POST'])
 @auth.login_required
 def create_post():
 
@@ -88,7 +88,7 @@ def create_post():
 
 
 # update existing blogpost
-@blog.route('/blog/posts/<string:post_id>', methods = ['PUT'])
+@blogposts.route('/blog/posts/<string:post_id>', methods = ['PUT'])
 @auth.login_required
 def update_post(post_id):
     if not request.json:
@@ -117,7 +117,7 @@ def update_post(post_id):
     return jsonify(make_serialisable(result))
 
 # delete existing blogpost
-@blog.route('/blog/posts/<string:post_id>', methods = ['DELETE'])
+@blogposts.route('/blog/posts/<string:post_id>', methods = ['DELETE'])
 @auth.login_required
 def delete_post(post_id):
     # delete and return deleted document
