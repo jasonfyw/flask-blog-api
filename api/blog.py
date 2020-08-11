@@ -38,7 +38,6 @@ API endpoints
 
 # get all blogposts
 @blog.route('/blog/posts', methods = ['GET'])
-@auth.login_required
 def get_all_posts():
     all_posts = list(posts.find())
 
@@ -53,7 +52,6 @@ def get_all_posts():
 
 # get blogpost by id
 @blog.route('/blog/posts/<string:post_id>', methods = ['GET'])
-@auth.login_required
 def get_post(post_id):
     post = posts.find_one({ '_id': ObjectId(post_id) })
 
