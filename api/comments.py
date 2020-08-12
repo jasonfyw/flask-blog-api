@@ -46,6 +46,7 @@ def create_comment(post_id):
 
 # delete comment under post
 @comments.route('/blog/comments/<string:post_id>/<string:comment_id>', methods = ['DELETE'])
+@auth.login_required
 def delete_comment(post_id, comment_id):
     result = posts.find_one_and_update(
         {'_id': ObjectId(post_id)},
