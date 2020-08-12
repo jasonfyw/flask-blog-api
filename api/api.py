@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, make_response
 
 from blogposts import blogposts
+from auth import token
 
 app = Flask(__name__)
 
@@ -17,6 +18,7 @@ def not_found(error):
 Register blueprints to app
 """
 app.register_blueprint(blogposts)
+app.register_blueprint(token)
 
 
 if __name__ == "__main__":
