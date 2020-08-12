@@ -11,7 +11,7 @@ blogposts = Blueprint('blogposts', __name__)
 
 
 """
-API endpoints
+API endpoints for accessing and interacting with posts
 """
 
 # get all blogposts
@@ -55,7 +55,8 @@ def create_post():
         'publishdate': datetime.datetime.now(),
         'category': request.json.get('category', ''),
         'text': request.json['text'],
-        'visibility': True
+        'visibility': True,
+        'comments': []
     }
 
     # insert document into collection and return the blogpost

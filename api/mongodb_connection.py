@@ -18,7 +18,15 @@ client = MongoClient(MONGODB_URI)
 db = client[DB_NAME]
 posts = db.posts
 
+
+"""
+Make post JSON serialisable
+"""
+
 # convert _id field in a document from ObjectId into a serialisable string
 def make_serialisable(post):
     post['_id'] = str(post['_id'])
+    if 'comments' in post.keys():
+        for comment in post['comments']:
+            comment['_id'] = str(comment['_id'])
     return post
