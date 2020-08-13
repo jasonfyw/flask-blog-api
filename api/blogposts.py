@@ -3,8 +3,8 @@ from pymongo import MongoClient, ReturnDocument
 from bson.objectid import ObjectId
 import datetime
 
-from auth import auth
-from mongodb_connection import posts, make_serialisable
+from api.auth import auth
+from api.mongodb_connection import posts, make_serialisable
 
 
 blogposts = Blueprint('blogposts', __name__)
