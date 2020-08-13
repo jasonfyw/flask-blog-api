@@ -1,15 +1,13 @@
 from pymongo import MongoClient
 import os
-from os.path import join, dirname
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 
 """
 MongoDB setup
 """
 # load MongoDB details from .env file
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+load_dotenv(find_dotenv())
 MONGODB_URI = os.environ.get('MONGODB_URI')
 DB_NAME = os.environ.get('DB_NAME')
 

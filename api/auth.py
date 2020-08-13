@@ -1,14 +1,12 @@
 from flask import Blueprint, jsonify, make_response
 from flask_httpauth import HTTPBasicAuth
 import os
-from os.path import join, dirname
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serialiser, BadSignature, SignatureExpired)
 
 auth = HTTPBasicAuth()
 
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+load_dotenv(find_dotenv())
 
 """
 Basic token-based authentication
