@@ -57,7 +57,7 @@ Protected endpoint to fetch token
 
 token = Blueprint('token', __name__)
 
-@token.route('/token')
+@token.route('/auth/token')
 @auth.login_required
 def get_auth_token():
     token = generate_auth_token('admin')
