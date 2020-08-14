@@ -31,15 +31,25 @@ Create a `.env` file and enter in the following fields:
 
 Once you have everything set up, you can try the API out!
 
-To start the Flask app, run:
+To start the Flask app, navigate into the `api` directory 
 
 ```
-$ python run.py
+$ cd api
 ```
 
-The app should now be running on `localhost:5000`
+and start the Flask app by either running:
 
-Now, using curl or whatever client you want (Insomnia, Postman),  you can interact with the API! The currently available endpoints are detailed in the table below (a note on authentication follows).
+```
+$ python api.py
+```
+or:
+```
+$ flask run
+```
+
+The app should now be running on `localhost:5000`.
+
+Now, using curl or your client of choice (Insomnia, Postman), you can interact with the API! The currently available endpoints are detailed in the table below (a note on authentication follows).
 
 ### Endpoints
 
