@@ -7,7 +7,6 @@ lib
 
 # environment variables
 .env
-.flaskenv
 
 # miscellaneous
 __pycache__
